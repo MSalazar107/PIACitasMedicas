@@ -19,7 +19,7 @@ namespace CitasMedicas.Controllers
 
         public async Task<ActionResult<List<Doctores>>> GetAll()
         {
-            return await dbContext.Doctor.ToListAsync();
+            return await dbContext.Doctor.Include(x => x.CitasM).ToListAsync();
         }
 
         [HttpGet("{id:int}")]

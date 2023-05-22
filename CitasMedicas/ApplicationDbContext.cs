@@ -10,9 +10,9 @@ namespace CitasMedicas
         }
 
         public DbSet<Citas> Cita { get; set; }
-        
-        public DbSet <Doctores>Doctor { get; set; }
 
-        public DbSet<Pacientes> Paciente { get; set;}
+        public DbSet<Doctores> Doctor { get; set; }
+
+        public DbSet<Pacientes> Paciente { get; set; }
     }
 }
