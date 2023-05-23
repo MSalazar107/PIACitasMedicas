@@ -17,19 +17,19 @@ namespace CitasMedicas.Controllers
 
         [HttpGet("Lista de Doctores del Hospital")]
 
-        public async Task<ActionResult<List<Doctores>>> GetAll()
+        public async Task<ActionResult<List<Doctor>>> GetAll()
         {
             return await dbContext.Doctor.Include(x => x.CitasM).ToListAsync();
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Doctores>> GetById(int id)
+        public async Task<ActionResult<Doctor>> GetById(int id)
         {
             return await dbContext.Doctor.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(Doctores  doctor)
+        public async Task<ActionResult> Post(Doctor  doctor)
         {
             dbContext.Add(doctor);
             await dbContext.SaveChangesAsync();
@@ -38,7 +38,7 @@ namespace CitasMedicas.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(Doctores doctor, int id)
+        public async Task<ActionResult> Put(Doctor doctor, int id)
         {
             var existedoc = await dbContext.Doctor.AnyAsync(x => x.Id == doctor.Id);
             if(doctor.Id != id) 
@@ -65,7 +65,7 @@ namespace CitasMedicas.Controllers
                 return NotFound("El Recurso no fue encontrado.");
             }
 
-            dbContext.Remove(new Doctores()
+            dbContext.Remove(new Doctor()
             {
                 Id = id
             });

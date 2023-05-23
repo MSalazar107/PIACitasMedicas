@@ -2,7 +2,7 @@
 
 namespace CitasMedicas.Entidades
 {
-    public class Doctores
+    public class Doctor
     {
         [Key]
         public int Id { get; set; }
@@ -13,7 +13,7 @@ namespace CitasMedicas.Entidades
 
         public string consultorio { get; set; }
 
-        public List<Citas> CitasM { get; set; }
+        public List<Cita> CitasM { get; set; }
     
     }
 }

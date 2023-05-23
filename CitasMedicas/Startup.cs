@@ -29,6 +29,8 @@ namespace CitasMedicas
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CitasMedicas", Version = "v1" });
             });
+
+            services.AddAutoMapper(typeof(Startup));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

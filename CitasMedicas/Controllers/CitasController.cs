@@ -16,7 +16,7 @@ namespace CitasMedicas.Controllers
         }
 
         [HttpPost("Agendar cita")]
-        public async Task<ActionResult> Post(Citas cita)
+        public async Task<ActionResult> Post(Cita cita)
         {
             bool hayConflictos = dbContext.Cita.Any(c =>
               (c.DocId == cita.DocId || c.PacienteId == cita.PacienteId)&&
@@ -34,20 +34,20 @@ namespace CitasMedicas.Controllers
 
         [HttpGet("lista_de_citas")]
 
-        public async Task<ActionResult<List<Citas>>> GetAll()
+        public async Task<ActionResult<List<Cita>>> GetAll()
         {
             return await dbContext.Cita.Include(x => x.Doctores).ToListAsync();
         }
 
         [HttpGet("buscar_cita_id")]
 
-        public async Task<ActionResult<Citas>> GetById(int id)
+        public async Task<ActionResult<Cita>> GetById(int id)
         {
             return await dbContext.Cita.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(Citas cita, int id)
+        public async Task<ActionResult> Put(Cita cita, int id)
         {
             var existedoc = await dbContext.Cita.AnyAsync(x => x.Id == cita.Id);
             if (cita.Id != id)
@@ -75,7 +75,7 @@ namespace CitasMedicas.Controllers
                 return NotFound("No se encontro la cita");
             }
 
-            dbContext.Remove(new Citas()
+            dbContext.Remove(new Cita()
             {
                 Id = id
             });
