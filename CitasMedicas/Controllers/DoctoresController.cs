@@ -1,4 +1,6 @@
 ﻿using CitasMedicas.Entidades;
+using CitasMedicas.Filtros;
+using CitasMedicas.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,16 +11,23 @@ namespace CitasMedicas.Controllers
     public class DoctoresController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
-
-        public DoctoresController(ApplicationDbContext dbContext)
+        private readonly IService service;
+        private readonly ILogger<DoctoresController> logger;
+        public DoctoresController(ApplicationDbContext dbContext, IService service,
+            ServiceTransient serviceTransient, ServiceScoped serviceScoped
+            ,ServiceSingleton serviceSingleton, ILogger<DoctoresController>logger)
         {
             this.dbContext = dbContext;
         }
 
         [HttpGet("Lista de Doctores del Hospital")]
+        [ResponseCache(Duration = 15)]
+        [ServiceFilter(typeof(FiltroDeAccion))]
 
         public async Task<ActionResult<List<Doctor>>> GetAll()
         {
+            logger.LogInformation("Obteniendo informacion de la lista de doctores");
+            service.EjecutarJob();
             return await dbContext.Doctor.Include(x => x.CitasM).ToListAsync();
         }
 

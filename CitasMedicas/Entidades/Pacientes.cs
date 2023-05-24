@@ -1,13 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CitasMedicas.Validaciones;
+using System.ComponentModel.DataAnnotations;
 
 namespace CitasMedicas.Entidades
 {
     public class Paciente
     {
         [Key]
+        [PrimeraLetraMayuscula]
         public int Id { get; set; } 
 
         public string nombre { get; set; }
+
+        public int edad { get; set; }
 
         public long telefono { get; set; }
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Numerics;
 
+
 namespace CitasMedicas.Controllers
 {
     [ApiController]
@@ -10,6 +11,7 @@ namespace CitasMedicas.Controllers
     public class PacientesController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
+        
 
         public PacientesController(ApplicationDbContext dbContext)
         {

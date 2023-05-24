@@ -1,4 +1,7 @@
 ﻿using System.Text.Json.Serialization;
+using CitasMedicas.Filtros;
+using CitasMedicas.Middlewares;
+using CitasMedicas.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -16,12 +19,28 @@ namespace CitasMedicas
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().AddJsonOptions(x =>
+            services.AddControllers(opciones =>
+            {
+                opciones.Filters.Add(typeof(FiltroDeExcepcion));
+            }).AddJsonOptions(x =>
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddDbContext<ApplicationDbContext>(options =>
              options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
+            services.AddTransient<IService, ServiceB>();
+
+            services.AddTransient<ServiceTransient>();
+
+            services.AddScoped<ServiceScoped>();
+
+            services.AddSingleton<ServiceSingleton>();
+            
+            services.AddTransient<FiltroDeAccion>();
+            
+            services.AddHostedService<EscribirEnArchivo>();
+            
+            services.AddResponseCaching();
 
             services.AddEndpointsApiExplorer();
 
@@ -35,6 +54,8 @@ namespace CitasMedicas
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseResponseHttpMiddleware();
+            
             // Configure the HTTP request pipeline.
             if (env.IsDevelopment())
             {
@@ -45,6 +66,8 @@ namespace CitasMedicas
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseResponseCaching();
 
             app.UseAuthorization();
 
