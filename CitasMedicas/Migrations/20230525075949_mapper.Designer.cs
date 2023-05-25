@@ -4,6 +4,7 @@ using CitasMedicas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CitasMedicas.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230525075949_mapper")]
+    partial class mapper
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,6 +47,8 @@ namespace CitasMedicas.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PacienteId");
 
                     b.ToTable("Cita");
                 });
@@ -90,10 +94,6 @@ namespace CitasMedicas.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<float>("altura")
-                        .HasMaxLength(5)
-                        .HasColumnType("real");
-
                     b.Property<string>("direccion")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -107,19 +107,10 @@ namespace CitasMedicas.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("hisorialEnfermedades")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<string>("nombre")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<float>("peso")
-                        .HasMaxLength(3)
-                        .HasColumnType("real");
 
                     b.Property<long>("telefono")
                         .HasMaxLength(15)
@@ -128,6 +119,15 @@ namespace CitasMedicas.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Paciente");
+                });
+
+            modelBuilder.Entity("CitasMedicas.Entidades.Cita", b =>
+                {
+                    b.HasOne("CitasMedicas.Entidades.Paciente", null)
+                        .WithMany("CitasP")
+                        .HasForeignKey("PacienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CitasMedicas.Entidades.Doctor", b =>
@@ -140,6 +140,11 @@ namespace CitasMedicas.Migrations
             modelBuilder.Entity("CitasMedicas.Entidades.Cita", b =>
                 {
                     b.Navigation("Doctores");
+                });
+
+            modelBuilder.Entity("CitasMedicas.Entidades.Paciente", b =>
+                {
+                    b.Navigation("CitasP");
                 });
 #pragma warning restore 612, 618
         }

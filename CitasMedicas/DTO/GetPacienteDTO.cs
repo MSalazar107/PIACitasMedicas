@@ -1,13 +1,11 @@
 ﻿using CitasMedicas.Validaciones;
 using System.ComponentModel.DataAnnotations;
 
-namespace CitasMedicas.Entidades
+namespace CitasMedicas.DTO
 {
-    public class Paciente
+    public class GetPacienteDTO
     {
-        [Key]
-        [PrimeraLetraMayuscula]
-        public int Id { get; set; } 
+        public int Id { get; set; }
 
         public string nombre { get; set; }
 
@@ -18,7 +16,11 @@ namespace CitasMedicas.Entidades
         public string email { get; set; }
 
         public string direccion { get; set; }
-
-        public List<Cita> CitasP { get; set; }
+       
+        public float peso { get; set; }
+        
+        public float altura { get; set; }
+       
+        public string hisorialEnfermedades { get; set; }
     }
 }

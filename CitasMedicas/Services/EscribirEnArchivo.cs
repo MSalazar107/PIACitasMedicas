@@ -41,7 +41,7 @@
 
             using (StreamWriter writer = new StreamWriter(ruta, append: true)) { writer.WriteLine(msg); }
         }
-
+        /*
         private void GuardarAlumnos()
         {
             var ruta = $@"{env.ContentRootPath}\wwwroot\{Historial}";
@@ -49,5 +49,6 @@
             //object Alumno = task.Result.Value;
             //using (StreamWriter writer = new StreamWriter(ruta, append: true)) { writer.WriteLine(Alumno); }
         }
+        */
     }
 }
