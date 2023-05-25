@@ -42,9 +42,9 @@
             using (StreamWriter writer = new StreamWriter(ruta, append: true)) { writer.WriteLine(msg); }
         }
 
-        private void GuardarAlumnos()
+        private void GuardarPacientes()
         {
-            var ruta = $@"{env.ContentRootPath}\wwwroot\{Historial}";
+            //var ruta = $@"{env.ContentRootPath}\wwwroot\{Historial}";
             //ActionResult task = alumnosController.ObtenerGuid();
             //object Alumno = task.Result.Value;
             //using (StreamWriter writer = new StreamWriter(ruta, append: true)) { writer.WriteLine(Alumno); }
