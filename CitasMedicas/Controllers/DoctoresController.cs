@@ -3,6 +3,7 @@ using CitasMedicas.DTO;
 using CitasMedicas.Entidades;
 using CitasMedicas.Filtros;
 using CitasMedicas.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -41,23 +42,24 @@ namespace CitasMedicas.Controllers
          }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<DoctorDTO>> Get(int id)
+        public async Task<ActionResult<DoctorDTOConCitas>> Get(int id)
         {
-            /*var doctor = await dbContext.Doctor
+            var doctor = await dbContext.Doctor
                 .Include(doctorDB => doctorDB.DoctorCitas)
                 .ThenInclude(doctorCitaDB => doctorCitaDB.Cita)
                 .FirstOrDefaultAsync(doctorBD => doctorBD.Id == id);
-            */
-            var doctor = await dbContext.Doctor.FirstOrDefaultAsync(doctorBD => doctorBD.Id == id);
+            
+            //var doctor = await dbContext.Doctor.FirstOrDefaultAsync(doctorBD => doctorBD.Id == id);
             if (doctor == null)
             {
                 return NotFound();
             }
 
-            return mapper.Map<DoctorDTO>(doctor);
+            return mapper.Map<DoctorDTOConCitas>(doctor);
         }
         
         [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Admin")]
         public async Task<ActionResult> Post([FromBody] DoctorDTO doctorDto)
         {
             var existeDoctorMismoNombre = await dbContext.Doctor.AnyAsync(x => x.nombre == doctorDto.nombre);
@@ -76,6 +78,7 @@ namespace CitasMedicas.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Admin")]
         public async Task<ActionResult> Put(GetDoctorDTO doctorCreacionDTO, int id)
         {
             var existedoc = await dbContext.Doctor.AnyAsync(x => x.Id == doctorCreacionDTO.Id);
@@ -94,6 +97,7 @@ namespace CitasMedicas.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Admin")]
         public async Task<ActionResult> Delete(int id)
         {
             var exist = await dbContext.Doctor.AnyAsync(x => x.Id == id);
