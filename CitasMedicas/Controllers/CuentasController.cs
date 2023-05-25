@@ -107,7 +107,29 @@ namespace CitasMedicas.Controllers
 
         }
 
+        [HttpPost("Doctor")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Admin")]
+        public async Task<ActionResult> HacerDoctor(AdminDTO adminDTO)
+        {
+            var usuario = await userManager.FindByEmailAsync(adminDTO.Email);
+
+            await userManager.AddClaimAsync(usuario, new Claim("Doctor", "2"));
+
+            return NoContent();
+        }
+        [HttpPost("RemoverDoctor")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Admin")]
+        public async Task<ActionResult> RemoverDoctor(AdminDTO adminDTO)
+        {
+            var usuario = await userManager.FindByEmailAsync(adminDTO.Email);
+
+            await userManager.RemoveClaimAsync(usuario, new Claim("Doctor", "2"));
+
+            return NoContent();
+        }
+
         [HttpPost("Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Admin")]
         public async Task<ActionResult> HacerAdmin(AdminDTO adminDTO)
         {
             var usuario = await userManager.FindByEmailAsync(adminDTO.Email);
@@ -118,6 +140,7 @@ namespace CitasMedicas.Controllers
         }
 
         [HttpPost("RemoverAdmin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Admin")]
         public async Task<ActionResult> RemoverAdmin(AdminDTO adminDTO)
         {
             var usuario = await userManager.FindByEmailAsync(adminDTO.Email);

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using CitasMedicas.DTO;
 using CitasMedicas.Entidades;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +10,7 @@ namespace CitasMedicas.Controllers
 {
     [ApiController]
     [Route("Citas")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Doctor")]
     public class CitasController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
@@ -45,7 +48,7 @@ namespace CitasMedicas.Controllers
         }
 
         [HttpGet("buscar_cita_id")]
-
+        [AllowAnonymous]
         public async Task<ActionResult<CitaDTOConDoctor>> GetById(int id)
         {
             var cita = await dbContext.Cita.FirstOrDefaultAsync(citaBD => citaBD.Id == id);

@@ -100,7 +100,8 @@ namespace CitasMedicas
             services.AddAuthorization(opciones =>
             {
                 opciones.AddPolicy("Admin", politica => politica.RequireClaim("Admin"));
-              
+                opciones.AddPolicy("Doctor", politica => politica.RequireClaim("Doctor"));
+
             });
 
             services.AddCors(opciones =>

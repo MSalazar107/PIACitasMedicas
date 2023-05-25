@@ -42,6 +42,7 @@ namespace CitasMedicas.Controllers
          }
 
         [HttpGet("{id:int}")]
+        [AllowAnonymous]
         public async Task<ActionResult<DoctorDTOConCitas>> Get(int id)
         {
             var doctor = await dbContext.Doctor
