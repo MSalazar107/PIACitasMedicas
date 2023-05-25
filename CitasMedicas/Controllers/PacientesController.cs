@@ -1,4 +1,8 @@
-﻿using CitasMedicas.Entidades;
+﻿using AutoMapper;
+using CitasMedicas.DTO;
+using CitasMedicas.Entidades;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Numerics;
@@ -8,32 +12,46 @@ namespace CitasMedicas.Controllers
 {
     [ApiController]
     [Route("Pacientes")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Doctor")]
     public class PacientesController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
-        
+        private readonly IMapper mapper;
 
-        public PacientesController(ApplicationDbContext dbContext)
+        public PacientesController(ApplicationDbContext dbContext, IMapper mapper)
         {
             this.dbContext = dbContext;
+            this.mapper = mapper;
         }
 
         [HttpGet("Lista de pacientes")]
-        public async Task<ActionResult<List<Paciente>>> GetAll()
+        [AllowAnonymous]
+        public async Task<ActionResult<List<GetPacienteDTO>>> Get()
         {
-            return await dbContext.Paciente.Include(x =>x.CitasP).ToListAsync();
+            var pacientes = await dbContext.Paciente.ToListAsync();
+            return mapper.Map<List<GetPacienteDTO>>(pacientes);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Paciente>> GetById(int id)
+        [AllowAnonymous]
+        public async Task<ActionResult<PacienteDTO>> Get(int id)
         {
-            return await dbContext.Paciente.FirstOrDefaultAsync(x => x.Id == id);
+            var paciente = await dbContext.Paciente.FirstOrDefaultAsync(pacienteBD => pacienteBD.Id == id);
+            if (paciente == null)
+            {
+                return NotFound();
+            }
+
+            return mapper.Map<PacienteDTO>(paciente);
         }
 
         [HttpPost]
 
-        public async Task<ActionResult> Post(Paciente paciente)
+        public async Task<ActionResult> Post([FromBody] PacienteDTO pacienteDto)
         {
+           
+            var paciente = mapper.Map<Paciente>(pacienteDto);
+
             dbContext.Add(paciente);
             await dbContext.SaveChangesAsync();
 
@@ -41,19 +59,18 @@ namespace CitasMedicas.Controllers
         }
 
         [HttpPut("Buscar paciente por id")]
+        [AllowAnonymous]
 
-        public async Task<ActionResult> Put(Paciente paciente, int id)
+        public async Task<ActionResult> Put(GetPacienteDTO pacienteCreacionDTO, int id)
         {
-            var existepac = await dbContext.Doctor.AnyAsync(x => x.Id == paciente.Id);
-            if (paciente.Id != id)
+            var exist = await dbContext.Paciente.AnyAsync(x => x.Id == pacienteCreacionDTO.Id);
+            if (!exist)
             {
-                return BadRequest("No existe doctor en la base de datos");
+                return BadRequest("No existe el paciente en la base de datos");
             }
 
-            if (paciente.Id != id)
-            {
-                return BadRequest("El id del doctor no coincide con la URL");
-            }
+            var paciente = mapper.Map<Paciente>(pacienteCreacionDTO);
+            paciente.Id = id;
 
             dbContext.Update(paciente);
             await dbContext.SaveChangesAsync();

@@ -1,4 +1,8 @@
-﻿using CitasMedicas.Entidades;
+﻿using AutoMapper;
+using CitasMedicas.DTO;
+using CitasMedicas.Entidades;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,13 +10,17 @@ namespace CitasMedicas.Controllers
 {
     [ApiController]
     [Route("Citas")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Doctor")]
     public class CitasController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
+        private readonly IMapper mapper;
 
-        public CitasController(ApplicationDbContext dbContext) 
+        public CitasController(ApplicationDbContext dbContext, IMapper mapper) 
         {
             this.dbContext = dbContext;
+            this.mapper = mapper;
+
         }
 
         [HttpPost("Agendar cita")]
@@ -40,10 +48,16 @@ namespace CitasMedicas.Controllers
         }
 
         [HttpGet("buscar_cita_id")]
-
-        public async Task<ActionResult<Cita>> GetById(int id)
+        [AllowAnonymous]
+        public async Task<ActionResult<CitaDTOConDoctor>> GetById(int id)
         {
-            return await dbContext.Cita.FirstOrDefaultAsync(x => x.Id == id);
+            var cita = await dbContext.Cita.FirstOrDefaultAsync(citaBD => citaBD.Id == id);
+            if (cita == null)
+            {
+                return NotFound();
+            }
+
+            return mapper.Map<CitaDTOConDoctor>(cita);
         }
 
         [HttpPut("{id:int}")]
