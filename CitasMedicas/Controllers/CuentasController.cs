@@ -129,7 +129,7 @@ namespace CitasMedicas.Controllers
         }
 
         [HttpPost("Admin")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "Admin")]
+        
         public async Task<ActionResult> HacerAdmin(AdminDTO adminDTO)
         {
             var usuario = await userManager.FindByEmailAsync(adminDTO.Email);

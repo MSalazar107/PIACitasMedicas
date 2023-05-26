@@ -3,8 +3,10 @@ using CitasMedicas.DTO;
 using CitasMedicas.Entidades;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace CitasMedicas.Controllers
 {
@@ -16,7 +18,7 @@ namespace CitasMedicas.Controllers
         private readonly ApplicationDbContext dbContext;
         private readonly IMapper mapper;
 
-        public CitasController(ApplicationDbContext dbContext, IMapper mapper) 
+        public CitasController(ApplicationDbContext dbContext, IMapper mapper)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
@@ -27,12 +29,13 @@ namespace CitasMedicas.Controllers
         public async Task<ActionResult> Post(Cita cita)
         {
             bool hayConflictos = dbContext.Cita.Any(c =>
-              (c.DocId == cita.DocId || c.PacienteId == cita.PacienteId)&&
+              (c.DocId == cita.DocId || c.PacienteId == cita.PacienteId) &&
               c.fecha == cita.fecha &&
-              c.hora == cita.hora.AddMinutes(-30)&& c.hora <= cita.hora.AddMinutes(30));
+              c.hora == cita.hora.AddMinutes(-30) && c.hora <= cita.hora.AddMinutes(30));
 
-            if (hayConflictos) {
-                return BadRequest("La cita se empalma con otra existente");            
+            if (hayConflictos)
+            {
+                return BadRequest("La cita se empalma con otra existente");
             }
             dbContext.Cita.Add(cita);
             await dbContext.SaveChangesAsync();
@@ -96,6 +99,31 @@ namespace CitasMedicas.Controllers
             await dbContext.SaveChangesAsync();
             return Ok();
 
+        }
+        [HttpPatch("{id:int}")]
+        public async Task<ActionResult> Patch(int id, JsonPatchDocument<CitaPatchDTO> patchDocument)
+        {
+            if (patchDocument == null) { return BadRequest(); }
+
+            var citaDB = await dbContext.Cita.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (citaDB == null) { return NotFound(); }
+
+            var citaDTO = mapper.Map<CitaPatchDTO>(citaDB);
+
+            patchDocument.ApplyTo(citaDTO);
+
+            var isValid = TryValidateModel(citaDTO);
+
+            if (!isValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            mapper.Map(citaDTO, citaDB);
+
+            await dbContext.SaveChangesAsync();
+            return NoContent();
         }
     }
 }

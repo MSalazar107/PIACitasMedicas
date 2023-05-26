@@ -21,9 +21,8 @@ namespace CitasMedicas.Utilidades
             CreateMap<Paciente, GetPacienteDTO>();
             CreateMap<Paciente, PacienteDTOConCitas>()
                 .ForMember(pacienteDTO => pacienteDTO.Citas, opciones => opciones.MapFrom(MapPacienteDTOCitas));
-            //CreateMap<ClasePatchDTO, Clase>().ReverseMap();
-            //CreateMap<CursoCreacionDTO, Cursos>();
-           // CreateMap<Cursos, CursoDTO>();
+            CreateMap<CitaPatchDTO, Cita>().ReverseMap();
+     
         }
 
         private List<CitaDTO> MapDoctorDTOCitas(Doctor doctor, GetDoctorDTO getDoctorDTO)

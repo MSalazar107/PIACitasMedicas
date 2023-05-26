@@ -16,15 +16,10 @@ namespace CitasMedicas
 
             modelBuilder.Entity<DoctorCitas>()
                 .HasKey(al => new { al.DoctorId, al.CitaId });
-        }
-
-        /*protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
             modelBuilder.Entity<PacienteCitas>()
                 .HasKey(al => new { al.PacienteId, al.CitaId });
-        }*/
+        }
+
 
         public DbSet<Cita> Cita { get; set; }
 
